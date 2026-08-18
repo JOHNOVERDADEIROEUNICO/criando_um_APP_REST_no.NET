@@ -9,7 +9,7 @@ namespace ContosoPizza.Models
 
         public int? UsuarioId { get; set; }
 
-        public Cliente? Cliente { get; set; }
+        public Clientes? Cliente { get; set; }
 
         public DateTime Data { get; set; } = DateTime.Now.ToLocalTime();
 

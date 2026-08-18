@@ -10,7 +10,7 @@ namespace ContosoPizza.Models
 
         public int PedidoId { get; set; }
 
-        public Pedido Pedido { get; set; }
+        public Pedido? Pedido { get; set; }
 
         public TipoEnum Tipo { get; set; }
 

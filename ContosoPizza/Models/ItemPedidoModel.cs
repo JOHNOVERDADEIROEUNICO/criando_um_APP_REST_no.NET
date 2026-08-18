@@ -9,11 +9,11 @@ namespace ContosoPizza.Models
 
         public int PedidoId { get; set; }
 
-        public Pedido Pedido { get; set; }
+        public Pedido? Pedido { get; set; }
 
         public int PizzaId { get; set; }
 
-        public Pizza Pizza { get; set; }
+        public Pizza? Pizza { get; set; }
 
         public int Quantidade { get; set; }
 

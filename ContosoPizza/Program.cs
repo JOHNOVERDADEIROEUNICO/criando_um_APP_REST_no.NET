@@ -1,3 +1,7 @@
+using ContosoPizza.DataContext;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +19,11 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
+//Configurando o banco sql server:
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,7 +38,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapGet("/", () => "Hello world!");
 
 app.Run();

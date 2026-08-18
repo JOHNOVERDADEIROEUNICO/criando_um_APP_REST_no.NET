@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ContosoPizza.Models
 {
-    public class Cliente
+    public class Clientes
     {
         [Key]
         public int Id { get; set; }

@@ -8,7 +8,7 @@ namespace ContosoPizza.Models
         [Key]
         public int Id { get; set; }
 
-        public string Descricao { get; set; }
+        public string Descricao { get; set; } = string.Empty;
 
         public decimal Desconto { get; set; }
 
