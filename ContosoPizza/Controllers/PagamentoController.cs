@@ -6,7 +6,7 @@ namespace ContosoPizza.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PizzaController : ControllerBase
+    public class PagamentoController : ControllerBase
     {
         [HttpGet]
         public ActionResult Get()
