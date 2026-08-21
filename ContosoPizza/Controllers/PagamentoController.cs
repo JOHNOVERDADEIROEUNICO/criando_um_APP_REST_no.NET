@@ -1,3 +1,5 @@
+using ContosoPizza.Models;
+using ContosoPizza.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +10,17 @@ namespace ContosoPizza.Controllers
     [ApiController]
     public class PagamentoController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult Get()
+        private readonly IPagamentoService _PagamentoInterface;
+
+        public PagamentoController(IPagamentoService PagamentoInterface)
         {
-            return Ok("Olá, mundo!");
+            _PagamentoInterface = PagamentoInterface;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<Pagamento>>> GetPagamento()
+        {
+            return Ok(await _PagamentoInterface.GetPagamento());
         }
     }
 }

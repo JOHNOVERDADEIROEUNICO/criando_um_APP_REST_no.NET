@@ -1,3 +1,5 @@
+using ContosoPizza.Models;
+using ContosoPizza.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +10,17 @@ namespace ContosoPizza.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult Get()
+        private readonly IClienteService _ClienteInterface;
+
+        public ClienteController(IClienteService ClienteInterface)
         {
-            return Ok("Olá, mundo!");
+            _ClienteInterface = ClienteInterface;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<Clientes>>> GetClientes()
+        {
+            return Ok(await _ClienteInterface.GetClientes());
         }
     }
 }

@@ -1,3 +1,5 @@
+using ContosoPizza.Models;
+using ContosoPizza.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +10,17 @@ namespace ContosoPizza.Controllers
     [ApiController]
     public class PromocaoController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult Get()
+        private readonly IPromocaoService _PromocaoInterface;
+
+        public PromocaoController(IPromocaoService PromocaoInterface)
         {
-            return Ok("Olá, mundo!");
+            _PromocaoInterface = PromocaoInterface;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<Promocao>>> GetPromocao()
+        {
+            return Ok(await _PromocaoInterface.GetPromocao());
         }
     }
 }

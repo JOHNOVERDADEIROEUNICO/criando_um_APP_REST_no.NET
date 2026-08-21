@@ -1,4 +1,6 @@
 using ContosoPizza.DataContext;
+using ContosoPizza.Services.Implementations;
+using ContosoPizza.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -18,6 +20,14 @@ builder.WebHost.ConfigureKestrel(options =>
         listenOptions.UseHttps();
     });
 });
+
+//Esta linha faz o sistema entender que quando usarmos injeção de dependencia, a interface está conectada diretamente ao service, no caso você pode ver isso acontecendo no controller, onde usaremos a interface para conectar com as requisições http.
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IItemPedidoService, ItemPedidoService>();
+builder.Services.AddScoped<IPagamentoService, PagamentoService>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IPizzaService, PizzaService>();
+builder.Services.AddScoped<IPromocaoService, PromocaoService>();
 
 //Configurando o banco sql server:
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
