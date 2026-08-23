@@ -1,10 +1,11 @@
+using ContosoPizza.DTOs.ItemPedido;
 using ContosoPizza.Models;
 
 namespace ContosoPizza.Services.Interfaces
 {
     public interface IItemPedidoService
     {
-        Task<ServiceResponse<List<ItemPedido>>> GetItemPedido();
+        Task<ServiceResponse<List<ItemPedidoResponseDto>>> GetItemPedido();
 
         Task<ServiceResponse<List<ItemPedido>>> CreateItemPedido(ItemPedido newItemPedido);
 

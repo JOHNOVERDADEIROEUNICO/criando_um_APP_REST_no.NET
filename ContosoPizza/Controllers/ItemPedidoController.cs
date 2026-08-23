@@ -1,3 +1,4 @@
+using ContosoPizza.DTOs.ItemPedido;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,7 @@ namespace ContosoPizza.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<ItemPedido>>> GetItemPedido()
+        public async Task<ActionResult<ServiceResponse<List<ItemPedidoResponseDto>>>> GetItemPedido()
         {
             return Ok(await _ItemPedidoInterface.GetItemPedido());
         }

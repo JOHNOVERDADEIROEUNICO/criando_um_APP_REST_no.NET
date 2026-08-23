@@ -19,7 +19,7 @@ namespace ContosoPizza.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<Clientes>>> GetClientes()
+        public async Task<ActionResult<ServiceResponse<List<ClienteResponseDto>>>> GetClientes()
         {
             return Ok(await _ClienteInterface.GetClientes());
         }
