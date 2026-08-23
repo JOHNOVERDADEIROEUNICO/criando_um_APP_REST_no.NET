@@ -1,5 +1,6 @@
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
+using ContosoPizza.DTOs.Cliente;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,17 @@ namespace ContosoPizza.Controllers
         public async Task<ActionResult<ServiceResponse<Clientes>>> GetClientes()
         {
             return Ok(await _ClienteInterface.GetClientes());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<Clientes>>> CreateClientes([FromBody] ClienteCreateDto dto)
+        {
+            var response = await _ClienteInterface.CreateClientes(dto);
+
+            if(!response.Sucesso)
+                return BadRequest(response);
+
+            return Ok(response);
         }
     }
 }

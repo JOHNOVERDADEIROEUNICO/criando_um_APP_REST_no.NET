@@ -1,4 +1,5 @@
 using ContosoPizza.Models;
+using ContosoPizza.DTOs.Cliente;
 
 namespace ContosoPizza.Services.Interfaces
 {
@@ -6,7 +7,7 @@ namespace ContosoPizza.Services.Interfaces
     {
         Task<ServiceResponse<List<Clientes>>> GetClientes();
 
-        Task<ServiceResponse<List<Clientes>>> CreateClientes(Clientes newCliente);
+        Task<ServiceResponse<List<Clientes>>> CreateClientes(ClienteCreateDto dto);
 
         Task<ServiceResponse<Clientes>> GetClienteById(int id);
 
