@@ -5,7 +5,7 @@ namespace ContosoPizza.Services.Interfaces
 {
     public interface IClienteService
     {
-        Task<ServiceResponse<List<Clientes>>> GetClientes();
+        Task<ServiceResponse<List<ClienteResponseDto>>> GetClientes();
 
         Task<ServiceResponse<List<Clientes>>> CreateClientes(ClienteCreateDto dto);
 

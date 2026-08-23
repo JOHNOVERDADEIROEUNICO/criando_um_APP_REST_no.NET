@@ -63,14 +63,24 @@ namespace ContosoPizza.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<List<Clientes>>> GetClientes()
+        public async Task<ServiceResponse<List<ClienteResponseDto>>> GetClientes()
         {
-            ServiceResponse<List<Clientes>> serviceResponse = new ServiceResponse<List<Clientes>>();
+            ServiceResponse<List<ClienteResponseDto>> serviceResponse = new ServiceResponse<List<ClienteResponseDto>>();
 
             try
             {
-                serviceResponse.Dados = _context.Clientes.ToList();
-                if(serviceResponse.Dados.Count == 0)
+                var clientes = await _context.Clientes.ToListAsync();
+
+                var clientesDto = clientes.Select(c => new ClienteResponseDto
+                    {
+                        Id = c.Id,
+                        Nome = c.Nome,
+                        Email = c.Email
+                    }
+                ).ToList();
+
+                serviceResponse.Dados = clientesDto;
+                if(clientes.Count == 0)
                     serviceResponse.Mensagem = "Nenhum Dado Registrado.";
             }
             catch(Exception ex)
