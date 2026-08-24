@@ -1,10 +1,11 @@
+using ContosoPizza.DTOs.Pizza;
 using ContosoPizza.Models;
 
 namespace ContosoPizza.Services.Interfaces
 {
     public interface IPizzaService
     {
-        Task<ServiceResponse<List<Pizza>>> GetPizza();
+        Task<ServiceResponse<List<PizzaResponseDto>>> GetPizza();
 
         Task<ServiceResponse<List<Pizza>>> CreatePizza(Pizza newPizza);
 

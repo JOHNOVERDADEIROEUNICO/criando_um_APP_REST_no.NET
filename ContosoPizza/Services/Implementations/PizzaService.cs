@@ -1,6 +1,8 @@
 using ContosoPizza.DataContext;
+using ContosoPizza.DTOs.Pizza;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Services.Implementations
 {
@@ -23,14 +25,25 @@ namespace ContosoPizza.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<List<Pizza>>> GetPizza()
+        public async Task<ServiceResponse<List<PizzaResponseDto>>> GetPizza()
         {
-            ServiceResponse<List<Pizza>> serviceResponse = new ServiceResponse<List<Pizza>>();
+            ServiceResponse<List<PizzaResponseDto>> serviceResponse = new ServiceResponse<List<PizzaResponseDto>>();
 
             try
             {
-                serviceResponse.Dados = _context.Pizza.ToList();
-                if(serviceResponse.Dados.Count == 0)
+                var pizza = await _context.Pizza.ToListAsync();
+
+                var pizzaDto = pizza.Select(p => new PizzaResponseDto
+                {
+                    Id = p.Id,
+                    Nome = p.Nome,
+                    Preco = p.Preco
+
+                }).ToList();
+
+                serviceResponse.Dados = pizzaDto;
+                
+                if(pizzaDto.Count == 0)
                     serviceResponse.Mensagem = "Nenhum Dado Registrado.";
             }
             catch(Exception ex)

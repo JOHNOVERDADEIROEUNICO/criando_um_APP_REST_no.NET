@@ -1,3 +1,4 @@
+using ContosoPizza.DTOs.Pizza;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,7 @@ namespace ContosoPizza.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<Pizza>>> GetPizza()
+        public async Task<ActionResult<ServiceResponse<List<PizzaResponseDto>>>> GetPizza()
         {
             return Ok(await _PizzaInterface.GetPizza());
         }

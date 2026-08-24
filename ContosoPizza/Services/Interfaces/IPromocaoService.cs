@@ -1,10 +1,11 @@
+using ContosoPizza.DTOs.Promocao;
 using ContosoPizza.Models;
 
 namespace ContosoPizza.Services.Interfaces
 {
     public interface IPromocaoService
     {
-        Task<ServiceResponse<List<Promocao>>> GetPromocao();
+        Task<ServiceResponse<List<PromocaoResponseDto>>> GetPromocao();
 
         Task<ServiceResponse<List<Promocao>>> CreatePromocao(Promocao newPromocao);
 

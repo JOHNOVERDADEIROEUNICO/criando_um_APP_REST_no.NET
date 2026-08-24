@@ -1,6 +1,10 @@
+using System.Collections.Immutable;
 using ContosoPizza.DataContext;
+using ContosoPizza.DTOs.ItemPedido;
+using ContosoPizza.DTOs.Pedido;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Services.Implementations
 {
@@ -23,14 +27,42 @@ namespace ContosoPizza.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<List<Pedido>>> GetPedido()
+        public async Task<ServiceResponse<List<PedidoResponseDto>>> GetPedido()
         {
-            ServiceResponse<List<Pedido>> serviceResponse = new ServiceResponse<List<Pedido>>();
+            ServiceResponse<List<PedidoResponseDto>> serviceResponse = new ServiceResponse<List<PedidoResponseDto>>();
 
             try
             {
-                serviceResponse.Dados = _context.Pedido.ToList();
-                if(serviceResponse.Dados.Count == 0)
+                var pedidos = await _context.Pedido
+                    .Include(p => p.Itens)
+                    .ThenInclude(i => i.Pizza)
+                    .Include(i => i.Pagamento)
+                    .ToListAsync();
+
+                var pedidosDto = pedidos.Select(i => new PedidoResponseDto
+                {
+                    Id = i.Id,
+                    UsuarioId = i.UsuarioId,
+                    Data = i.Data.ToString("dd/MM/yyyy HH:mm"),
+                    Total = i.Total,
+                    
+                    Itens = i.Itens.Select(p => new ItemPedidoResponseDto
+                    {
+                        Id = p.Id,
+                        PizzaId = p.PizzaId,
+                        NomePizza = p.Pizza!.Nome,
+                        Quantidade = p.Quantidade
+
+                    }).ToList(),
+
+                    Tipo = i.Pagamento!.Tipo,
+                    Status = i.Pagamento!.Status
+
+                }).ToList();
+
+                serviceResponse.Dados = pedidosDto;
+
+                if(pedidosDto.Count == 0)
                     serviceResponse.Mensagem = "Nenhum Dado Registrado.";
             }
             catch(Exception ex)

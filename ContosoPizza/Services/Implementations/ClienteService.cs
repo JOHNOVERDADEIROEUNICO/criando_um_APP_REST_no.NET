@@ -80,6 +80,7 @@ namespace ContosoPizza.Services.Implementations
                 ).ToList();
 
                 serviceResponse.Dados = clientesDto;
+                
                 if(clientes.Count == 0)
                     serviceResponse.Mensagem = "Nenhum Dado Registrado.";
             }

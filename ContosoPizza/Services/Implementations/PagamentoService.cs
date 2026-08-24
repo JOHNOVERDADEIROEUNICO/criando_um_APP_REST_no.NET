@@ -1,6 +1,8 @@
 using ContosoPizza.DataContext;
+using ContosoPizza.DTOs.Pagamento;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Services.Implementations
 {
@@ -23,14 +25,25 @@ namespace ContosoPizza.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<List<Pagamento>>> GetPagamento()
+        public async Task<ServiceResponse<List<PagamentoResponseDto>>> GetPagamento()
         {
-            ServiceResponse<List<Pagamento>> serviceResponse = new ServiceResponse<List<Pagamento>>();
+            ServiceResponse<List<PagamentoResponseDto>> serviceResponse = new ServiceResponse<List<PagamentoResponseDto>>();
 
             try
             {
-                serviceResponse.Dados = _context.Pagamento.ToList();
-                if(serviceResponse.Dados.Count == 0)
+                var pagante = await _context.Pagamento.ToListAsync();
+
+                var PaganteDto = pagante.Select(p => new PagamentoResponseDto
+                {
+                    Id = p.Id,
+                    PedidoId = p.PedidoId,
+                    Tipo = p.Tipo,
+                    Status = p.Status
+                }).ToList();
+
+                serviceResponse.Dados = PaganteDto;
+                
+                if(PaganteDto.Count == 0)
                     serviceResponse.Mensagem = "Nenhum Dado Registrado.";
             }
             catch(Exception ex)

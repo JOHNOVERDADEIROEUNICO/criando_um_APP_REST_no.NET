@@ -1,10 +1,11 @@
+using ContosoPizza.DTOs.Pagamento;
 using ContosoPizza.Models;
 
 namespace ContosoPizza.Services.Interfaces
 {
     public interface IPagamentoService
     {
-        Task<ServiceResponse<List<Pagamento>>> GetPagamento();
+        Task<ServiceResponse<List<PagamentoResponseDto>>> GetPagamento();
 
         Task<ServiceResponse<List<Pagamento>>> CreatePagamento(Pagamento newPagamento);
 

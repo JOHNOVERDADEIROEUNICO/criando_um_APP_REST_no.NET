@@ -18,7 +18,7 @@ namespace ContosoPizza.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<Promocao>>> GetPromocao()
+        public async Task<ActionResult<ServiceResponse<List<Promocao>>>> GetPromocao()
         {
             return Ok(await _PromocaoInterface.GetPromocao());
         }

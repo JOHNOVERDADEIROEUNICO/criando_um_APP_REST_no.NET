@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ContosoPizza.DataContext;
 using ContosoPizza.Services.Implementations;
 using ContosoPizza.Services.Interfaces;
@@ -28,6 +29,13 @@ builder.Services.AddScoped<IPagamentoService, PagamentoService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IPizzaService, PizzaService>();
 builder.Services.AddScoped<IPromocaoService, PromocaoService>();
+
+//Faz com que nossos enums ao invészs de retornar numeros retornem as strings que estabelecemos.
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter());
+});
 
 //Configurando o banco sql server:
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

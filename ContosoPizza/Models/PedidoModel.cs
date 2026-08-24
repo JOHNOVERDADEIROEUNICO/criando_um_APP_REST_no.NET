@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ContosoPizza.Models
 {
@@ -9,6 +10,7 @@ namespace ContosoPizza.Models
 
         public int? UsuarioId { get; set; }
 
+        [ForeignKey("UsuarioId")]//Como o nome Usario ID não é indêntico ao nome da tabela, precisamos registrar como foreign Key para que o sistema reconheça.
         public Clientes? Cliente { get; set; }
 
         public DateTime Data { get; set; } = DateTime.Now.ToLocalTime();
