@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using ContosoPizza.DataContext;
 using ContosoPizza.DTOs.ItemPedido;
 using ContosoPizza.DTOs.Pedido;
+using ContosoPizza.Enum;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,60 @@ namespace ContosoPizza.Services.Implementations
             _context = context;
         }
 
-        public Task<ServiceResponse<List<Pedido>>> CreatePedido(Pedido newPedido)
+        public async Task<ServiceResponse<List<Pedido>>> CreatePedido(PedidoCreateDto dto)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<Pedido>> serviceResponse = new ServiceResponse<List<Pedido>>();
+
+            decimal total = 0;
+
+            var itens = new List<ItemPedido>();
+
+            try
+            {
+                foreach (var item in dto.Itens)
+                {
+                    var pizza = await _context.Pizza.FindAsync(item.PizzaId);
+
+                    if(pizza == null)
+                        throw new Exception("Pizza não encontrada");
+
+                    total += pizza.Preco * item.Quantidade;
+
+                    itens.Add(new ItemPedido
+                    {
+                        PizzaId = item.PizzaId,
+                        Quantidade = item.Quantidade
+                    });
+                }
+
+                var pedido = new Pedido
+                {
+                    UsuarioId = dto.UsuarioId,
+                    Data = DateTime.Now,
+                    Itens = itens,
+                    Total = total,
+
+                    Pagamento = new Pagamento
+                    {
+                        Tipo = (TipoEnum)2,
+                        Status = (StatusEnum)0,
+                        CodigoPix = Guid.NewGuid().ToString()
+                    }
+                
+                };
+
+                _context.Pedido.Add(pedido);
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Dados = _context.Pedido.ToList();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Mensagem = ex.Message;
+                serviceResponse.Sucesso = false;
+            }
+
+            return serviceResponse;
         }
 
         public Task<ServiceResponse<List<Pedido>>> DeletePedido(int id)

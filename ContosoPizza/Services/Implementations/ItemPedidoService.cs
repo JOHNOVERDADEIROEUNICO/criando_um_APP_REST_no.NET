@@ -15,6 +15,7 @@ namespace ContosoPizza.Services.Implementations
             _context = context;
         }
 
+        //O item pedido não precisa de um post, porque o post pedido já será capaz de jogar para dentro da tabela os parametros.
         public Task<ServiceResponse<List<ItemPedido>>> CreateItemPedido(ItemPedido newItemPedido)
         {
             throw new NotImplementedException();

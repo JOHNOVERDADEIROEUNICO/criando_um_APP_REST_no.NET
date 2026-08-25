@@ -23,5 +23,12 @@ namespace ContosoPizza.Controllers
         {
             return Ok(await _PedidoInterface.GetPedido());
         }
+
+        [HttpPost]
+        public async Task<ActionResult<PedidoResponseDto>> CriaPedido(PedidoCreateDto dto)
+        {
+            var pedido = await _PedidoInterface.CreatePedido(dto);
+            return Ok(pedido);
+        }
     }
 }
