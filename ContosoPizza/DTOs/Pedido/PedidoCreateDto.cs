@@ -1,4 +1,5 @@
 using ContosoPizza.DTOs.ItemPedido;
+using ContosoPizza.Enum;
 
 namespace ContosoPizza.DTOs.Pedido
 {
@@ -6,5 +7,7 @@ namespace ContosoPizza.DTOs.Pedido
     {
         public int? UsuarioId { get; set; }
         public List<ItemPedidoDto> Itens { get; set; } = new();
+
+        public TipoEnum TipoPagamento {get; set;}
     }
 }

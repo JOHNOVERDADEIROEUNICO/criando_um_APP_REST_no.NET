@@ -11,5 +11,7 @@ namespace ContosoPizza.DTOs.Pagamento
         public TipoEnum Tipo { get; set; }
 
         public StatusEnum Status { get; set; } 
+        
+        public string CodigoPix {get; set;} = string.Empty;
     }
 }

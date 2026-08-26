@@ -1,10 +1,15 @@
 using System.Collections.Immutable;
+
 using ContosoPizza.DataContext;
 using ContosoPizza.DTOs.ItemPedido;
+using ContosoPizza.DTOs.Pagamento;
 using ContosoPizza.DTOs.Pedido;
+
 using ContosoPizza.Enum;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
+using ContosoPizza.Helpers;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ContosoPizza.Services.Implementations
@@ -18,9 +23,9 @@ namespace ContosoPizza.Services.Implementations
             _context = context;
         }
 
-        public async Task<ServiceResponse<List<Pedido>>> CreatePedido(PedidoCreateDto dto)
+        public async Task<ServiceResponse<List<PedidoResponseDto>>> CreatePedido(PedidoCreateDto dto)
         {
-            ServiceResponse<List<Pedido>> serviceResponse = new ServiceResponse<List<Pedido>>();
+            ServiceResponse<List<PedidoResponseDto>> serviceResponse = new ServiceResponse<List<PedidoResponseDto>>();
 
             decimal total = 0;
 
@@ -28,6 +33,9 @@ namespace ContosoPizza.Services.Implementations
 
             try
             {
+                if(dto.Itens == null || dto.Itens.Any())
+                    throw new Exception("Pedido deve ter ao menos um item.");
+
                 foreach (var item in dto.Itens)
                 {
                     var pizza = await _context.Pizza.FindAsync(item.PizzaId);
@@ -41,7 +49,27 @@ namespace ContosoPizza.Services.Implementations
                     {
                         PizzaId = item.PizzaId,
                         Quantidade = item.Quantidade
+
                     });
+                }
+
+                var pagamento = new Pagamento
+                {
+                    Tipo = dto.TipoPagamento,
+                    Status = StatusEnum.Pendente //(StatusEnum)0
+
+                };
+
+                if(dto.TipoPagamento == TipoEnum.Pix)
+                {
+                    pagamento.CodigoPix = PixHelper.GerarCodigoPix(
+                        chave: "seuemail@pix.com", //Pode vir do banco depois
+                        valor: total,
+                        nome: "Contoso Pizzaria",
+                        cidade: "GOIANIA"
+
+                    );
+
                 }
 
                 var pedido = new Pedido
@@ -50,25 +78,47 @@ namespace ContosoPizza.Services.Implementations
                     Data = DateTime.Now,
                     Itens = itens,
                     Total = total,
-
-                    Pagamento = new Pagamento
-                    {
-                        Tipo = (TipoEnum)2,
-                        Status = (StatusEnum)0,
-                        CodigoPix = Guid.NewGuid().ToString()
-                    }
+                    Pagamento = pagamento
                 
                 };
 
                 _context.Pedido.Add(pedido);
                 await _context.SaveChangesAsync();
 
-                serviceResponse.Dados = _context.Pedido.ToList();
+                serviceResponse.Dados = await _context.Pedido
+                    .Include(p => p.Itens)
+                        .ThenInclude(i => i.Pizza)
+                    .Include(p => p.Pagamento)
+                    .Select(p => new PedidoResponseDto
+                    {
+                        Id = p.Id,
+                        UsuarioId = p.UsuarioId,
+                        Data = p.Data,
+                        Total = p.Total,
+
+                        Itens = p.Itens.Select(i => new ItemPedidoResponseDto
+                        {
+                            PizzaId = i.PizzaId,
+                            NomePizza = i.Pizza!.Nome,
+                            Preco = i.Pizza!.Preco,
+                            Quantidade = i.Quantidade
+
+                        }).ToList(),
+
+                        Pagamento = new PagamentoResponseDto
+                        {
+                            Tipo = p.Pagamento!.Tipo,
+                            Status = p.Pagamento.Status,
+                            CodigoPix = p.Pagamento.CodigoPix!
+
+                        }
+                    }).ToListAsync();
             }
             catch (Exception ex)
             {
                 serviceResponse.Mensagem = ex.Message;
                 serviceResponse.Sucesso = false;
+
             }
 
             return serviceResponse;
@@ -87,7 +137,7 @@ namespace ContosoPizza.Services.Implementations
             {
                 var pedidos = await _context.Pedido
                     .Include(p => p.Itens)
-                    .ThenInclude(i => i.Pizza)
+                        .ThenInclude(i => i.Pizza)
                     .Include(i => i.Pagamento)
                     .ToListAsync();
 
@@ -95,7 +145,7 @@ namespace ContosoPizza.Services.Implementations
                 {
                     Id = i.Id,
                     UsuarioId = i.UsuarioId,
-                    Data = i.Data.ToString("dd/MM/yyyy HH:mm"),
+                    Data = i.Data,
                     Total = i.Total,
                     
                     Itens = i.Itens.Select(p => new ItemPedidoResponseDto
@@ -107,8 +157,11 @@ namespace ContosoPizza.Services.Implementations
 
                     }).ToList(),
 
-                    Tipo = i.Pagamento!.Tipo,
-                    Status = i.Pagamento!.Status
+                    Pagamento = new PagamentoResponseDto
+                    {
+                        Tipo = i.Pagamento!.Tipo,
+                        Status = i.Pagamento!.Status
+                    }
 
                 }).ToList();
 
