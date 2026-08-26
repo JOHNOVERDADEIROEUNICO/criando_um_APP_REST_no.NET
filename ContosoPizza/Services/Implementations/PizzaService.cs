@@ -15,9 +15,41 @@ namespace ContosoPizza.Services.Implementations
             _context = context;
         }
 
-        public Task<ServiceResponse<List<Pizza>>> CreatePizza(Pizza newPizza)
+        public async Task<ServiceResponse<List<PizzaResponseDto>>> CreatePizza(PizzaCreateDto dto)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<PizzaResponseDto>> serviceResponse = new ServiceResponse<List<PizzaResponseDto>>();
+
+            try
+            {
+                if(dto.Preco <= 0)
+                    throw new Exception("Valor de preço inválido");
+                
+                var pizza = new Pizza
+                {
+                    Nome = dto.Nome,
+                    Preco = dto.Preco
+                };
+
+                _context.Pizza.Add(pizza);
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Dados = await _context.Pizza.Select(i => new PizzaResponseDto
+                {
+                    Id = i.Id,
+                    Nome = i.Nome,
+                    Preco = i.Preco
+                    
+                }).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Mensagem = ex.Message;
+                serviceResponse.Sucesso = false;
+
+            }
+
+            return serviceResponse;
         }
 
         public Task<ServiceResponse<List<Pizza>>> DeletePizza(int id)
