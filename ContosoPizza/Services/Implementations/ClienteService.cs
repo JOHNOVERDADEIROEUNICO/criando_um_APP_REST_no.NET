@@ -93,9 +93,36 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Clientes>>> UpdateClientes(Clientes updateCliente)
+        public async Task<ServiceResponse<ClienteResponseDto>> UpdateClientes(ClienteUpdateDto dto)
         {
-            throw new NotImplementedException();
+            ServiceResponse<ClienteResponseDto> serviceResponse = new();
+
+            try
+            {
+                var cliente = await _context.Clientes
+                    .FirstOrDefaultAsync(c => c.Id == dto.Id) ?? throw new Exception("Dados vazios. Tente novamente.");
+
+                // Atualiza os dados
+                cliente.Nome = dto.Nome;
+                cliente.Email = dto.Email;
+
+                await _context.SaveChangesAsync();
+
+                // Mapeia para DTO de resposta
+                serviceResponse.Dados = new ClienteResponseDto
+                {
+                    Id = cliente.Id,
+                    Nome = cliente.Nome,
+                    Email = cliente.Email
+                };
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Sucesso = false;
+                serviceResponse.Mensagem = ex.Message;
+            }
+
+            return serviceResponse;
         }
     }
 }
