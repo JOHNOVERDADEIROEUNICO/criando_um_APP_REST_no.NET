@@ -1,3 +1,4 @@
+using ContosoPizza.DTOs.Promocao;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -21,6 +22,12 @@ namespace ContosoPizza.Controllers
         public async Task<ActionResult<ServiceResponse<List<Promocao>>>> GetPromocao()
         {
             return Ok(await _PromocaoInterface.GetPromocao());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<PromocaoResponseDto>>> CreatePromocao(PromocaoCreateDto dto)
+        {
+            return Ok(await _PromocaoInterface.CreatePromocao(dto));
         }
     }
 }

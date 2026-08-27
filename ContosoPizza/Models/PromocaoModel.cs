@@ -16,5 +16,9 @@ namespace ContosoPizza.Models
 
         public bool ApenasParaCadastrados { get; set; }
 
+        public int PizzaId {get; set;}
+
+        public Pizza? Pizza {get; set;}
+
     }
 }

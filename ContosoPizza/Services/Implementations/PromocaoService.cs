@@ -15,9 +15,47 @@ namespace ContosoPizza.Services.Implementations
             _context = context;
         }
 
-        public Task<ServiceResponse<List<Promocao>>> CreatePromocao(Promocao newPromocao)
+        public async Task<ServiceResponse<List<PromocaoResponseDto>>> CreatePromocao(PromocaoCreateDto dto)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<PromocaoResponseDto>> serviceResponse = new ServiceResponse<List<PromocaoResponseDto>>();
+
+            try
+            {
+                var pizza = await _context.Pizza.FirstOrDefaultAsync(i => i.Id == dto.IdPizza);
+
+                if(pizza == null)
+                    throw new Exception("Pizza não encontrada. Tente novamente");
+
+                if(dto.Desconto <= 0 || dto.Desconto >= 1)
+                    throw new Exception("Valor inválido, Tente novamente.");
+
+                var promocao = new Promocao
+                {
+                    Descricao = dto.Descricao,
+                    Desconto = dto.Desconto,
+                    Ativa = false,
+                    ApenasParaCadastrados = false,
+                    PizzaId = pizza.Id
+                };
+
+                _context.Promocao.Add(promocao);
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Dados = await _context.Promocao.Select(i => new PromocaoResponseDto
+                {
+                    Id = i.Id,
+                    Descricao = i.Descricao,
+                    Desconto = i.Desconto
+                }).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Mensagem = ex.Message;
+                serviceResponse.Sucesso = false;
+            }
+
+            return serviceResponse;
         }
 
         public Task<ServiceResponse<List<Promocao>>> DeletePromocao(int id)
