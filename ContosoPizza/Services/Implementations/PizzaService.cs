@@ -3,6 +3,7 @@ using ContosoPizza.DTOs.Pizza;
 using ContosoPizza.Models;
 using ContosoPizza.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace ContosoPizza.Services.Implementations
 {
@@ -92,9 +93,34 @@ namespace ContosoPizza.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponse<List<Pizza>>> UpdatePizza(Pizza updatePizza)
+        public async Task<ServiceResponse<PizzaResponseDto>> UpdatePizza(PizzaUpdateDto dto)
         {
-            throw new NotImplementedException();
+            ServiceResponse<PizzaResponseDto> serviceResponse = new();
+
+            try
+            {
+                var pizza = await _context.Pizza.FirstOrDefaultAsync(c => c.Id == dto.Id) ?? throw new Exception("Dados vazios. Tente novamente.");
+
+                // Atualiza os dados
+                pizza.Preco = dto.Preco;
+                
+
+                await _context.SaveChangesAsync();
+
+                // Mapeia para DTO de resposta
+                serviceResponse.Dados = new PizzaResponseDto
+                {
+                    Id = pizza.Id,
+                    Preco = pizza.Preco
+                };
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Sucesso = false;
+                serviceResponse.Mensagem = ex.Message;
+            }
+
+            return serviceResponse;
         }
     }
 }

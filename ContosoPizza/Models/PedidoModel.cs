@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ContosoPizza.Migrations;
 
 namespace ContosoPizza.Models
 {
@@ -20,5 +21,10 @@ namespace ContosoPizza.Models
         public List<ItemPedido> Itens { get; set; } = new();
 
         public Pagamento? Pagamento { get; set; }
+
+        //Isso aqui se demonstrou ser desnecessário no fim.
+        public int? IdPromocao {get; set;}
+
+        public Promocao? Promocao {get; set;}
     }
 }

@@ -31,6 +31,8 @@ namespace ContosoPizza.Services.Implementations
 
             var itens = new List<ItemPedido>();
 
+            
+
             try
             {
                 if(dto.Itens == null || dto.Itens.Any())
@@ -38,12 +40,23 @@ namespace ContosoPizza.Services.Implementations
 
                 foreach (var item in dto.Itens)
                 {
-                    var pizza = await _context.Pizza.FindAsync(item.PizzaId);
+                    var pizza = await _context.Pizza.FindAsync(item.PizzaId) ?? throw new Exception("Nenhuma pizza encontrada. Tente novamente");
 
-                    if(pizza == null)
-                        throw new Exception("Pizza não encontrada");
+                    var promocao = await _context.Promocao.FindAsync(item.PizzaId);
 
-                    total += pizza.Preco * item.Quantidade;
+                    if(promocao == null)
+                        total += pizza.Preco * item.Quantidade;
+
+                    else if(dto.UsuarioId == null || promocao!.Ativa == false)
+                        total += pizza.Preco * item.Quantidade;
+
+                    else
+                    {
+                        if(promocao.Ativa == false)
+                            total += pizza.Preco * item.Quantidade;
+
+                        total += (pizza.Preco - (pizza.Preco * promocao.Desconto)) * item.Quantidade;
+                    }
 
                     itens.Add(new ItemPedido
                     {
@@ -100,7 +113,6 @@ namespace ContosoPizza.Services.Implementations
                         {
                             PizzaId = i.PizzaId,
                             NomePizza = i.Pizza!.Nome,
-                            Preco = i.Pizza!.Preco,
                             Quantidade = i.Quantidade
 
                         }).ToList(),
