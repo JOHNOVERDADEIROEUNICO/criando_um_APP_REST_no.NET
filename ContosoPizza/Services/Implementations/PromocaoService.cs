@@ -34,7 +34,7 @@ namespace ContosoPizza.Services.Implementations
                     Descricao = dto.Descricao,
                     Desconto = dto.Desconto,
                     Ativa = false,
-                    ApenasParaCadastrados = false,
+                    ApenasParaCadastrados = true,
                     PizzaId = pizza.Id
                 };
 
@@ -104,9 +104,51 @@ namespace ContosoPizza.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponse<List<Promocao>>> UpdatePromocao(Promocao updatePromocao)
+        public async Task<ServiceResponse<PromocaoResponseDto>> UpdatePromocao(PromocaoUpdateDto dto)
         {
-            throw new NotImplementedException();
+            ServiceResponse<PromocaoResponseDto> serviceResponse = new();
+
+            try
+            {
+                var promocao = await _context.Promocao
+                .FirstOrDefaultAsync(p => p.Id == dto.Id) ?? throw new Exception("Dados vazios. Tente novamente.");
+                
+                if(dto.ApenasParaCadastrados == null || dto.Ativa == null || dto.Desconto <=0 || dto.Desconto >=1 || dto.Descricao == null)
+                    throw new Exception("Algum dado está vazio, Tente Novamente.");
+
+                promocao.Desconto = dto.Desconto;
+                promocao.Descricao = dto.Descricao;
+
+                if(dto.Ativa == "sim")
+                    promocao.Ativa = true;
+
+                else if(dto.Ativa == "não")
+                    promocao.Ativa = false;
+
+                if(dto.ApenasParaCadastrados == "sim")
+                    promocao.ApenasParaCadastrados = true;
+
+                else if(dto.ApenasParaCadastrados == "não")
+                    promocao.ApenasParaCadastrados = false;
+
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Dados = new PromocaoResponseDto
+                {
+                    Descricao = promocao.Descricao,
+                    Desconto = promocao.Desconto,
+                    Ativa = promocao.Ativa,
+                    ApenasParaCadastrados = promocao.ApenasParaCadastrados
+                };
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Sucesso = false;
+                serviceResponse.Mensagem = ex.Message;
+            }
+
+            return serviceResponse;
         }
     }
 }

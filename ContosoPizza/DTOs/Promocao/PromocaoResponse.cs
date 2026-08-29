@@ -9,5 +9,7 @@ namespace ContosoPizza.DTOs.Promocao
         public decimal Desconto { get; set; }
 
         public bool Ativa { get; set; }
+
+        public bool ApenasParaCadastrados {get; set;}
     }
 }

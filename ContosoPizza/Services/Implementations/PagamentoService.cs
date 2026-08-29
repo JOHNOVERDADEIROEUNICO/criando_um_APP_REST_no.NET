@@ -1,3 +1,4 @@
+using System.Diagnostics.Eventing.Reader;
 using ContosoPizza.DataContext;
 using ContosoPizza.DTOs.Pagamento;
 using ContosoPizza.Models;
@@ -55,9 +56,39 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<List<Pagamento>>> UpdatePagemento(Pagamento updatePagemento)
+        public async Task<ServiceResponse<string>> ConfirmarPagemento(int pedidoId)
         {
-            throw new NotImplementedException();
+            ServiceResponse<string> serviceResponse = new ServiceResponse<string>();
+
+            
+            var pagamento = await _context.Pagamento
+                .FirstOrDefaultAsync(p => p.PedidoId == pedidoId);
+
+            if(pagamento == null)
+            {
+                serviceResponse.Sucesso = false;
+                serviceResponse.Mensagem = "Pagamento já processado";
+            }
+                
+            else if(pagamento!.Status != Enum.StatusEnum.Pendente)
+            {
+                serviceResponse.Sucesso = false;
+                serviceResponse.Mensagem = "Pagamento já processado";
+            }
+
+            else
+            {
+                pagamento.Status = Enum.StatusEnum.Aprovado;
+
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Sucesso = true;
+                serviceResponse.Mensagem = "Pagamento confirmado";
+
+                serviceResponse.Dados = $"Pago em: {pagamento.PagoEm}";
+            }
+        
+            return serviceResponse;
         }
     }
 }

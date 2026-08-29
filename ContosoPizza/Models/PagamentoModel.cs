@@ -17,5 +17,7 @@ namespace ContosoPizza.Models
         public StatusEnum Status { get; set; } 
 
         public string? CodigoPix { get; set; }
+
+        public DateTime? PagoEm { get; set; }
     }
 }

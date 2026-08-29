@@ -29,5 +29,16 @@ namespace ContosoPizza.Controllers
         {
             return Ok(await _PromocaoInterface.CreatePromocao(dto));
         }
+
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<PromocaoResponseDto>>> UpdatePromocao(PromocaoUpdateDto dto)
+        {
+            var response = await _PromocaoInterface.UpdatePromocao(dto);
+
+            if(!response.Sucesso)
+                return NotFound(response);
+
+            return Ok(response);
+        }
     }
 }

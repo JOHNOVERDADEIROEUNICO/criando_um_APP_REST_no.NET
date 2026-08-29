@@ -9,7 +9,7 @@ namespace ContosoPizza.Services.Interfaces
 
         Task<ServiceResponse<List<Pagamento>>> CreatePagamento(Pagamento newPagamento);
 
-        Task<ServiceResponse<List<Pagamento>>> UpdatePagemento(Pagamento updatePagemento);
+        Task<ServiceResponse<string>> ConfirmarPagemento(int pedidoId);
 
         Task<ServiceResponse<List<Pagamento>>> DeletePagamento(int id);
     }
