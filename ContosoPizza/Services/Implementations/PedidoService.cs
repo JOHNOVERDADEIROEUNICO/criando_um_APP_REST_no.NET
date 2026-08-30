@@ -31,8 +31,6 @@ namespace ContosoPizza.Services.Implementations
 
             var itens = new List<ItemPedido>();
 
-            
-
             try
             {
                 if(dto.Itens == null || dto.Itens.Any())

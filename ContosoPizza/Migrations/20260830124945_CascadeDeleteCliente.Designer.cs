@@ -4,6 +4,7 @@ using ContosoPizza.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContosoPizza.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260830124945_CascadeDeleteCliente")]
+    partial class CascadeDeleteCliente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +57,7 @@ namespace ContosoPizza.Migrations
                     b.Property<int>("PedidoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PizzaId")
+                    b.Property<int>("PizzaId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantidade")
@@ -194,7 +197,8 @@ namespace ContosoPizza.Migrations
                     b.HasOne("ContosoPizza.Models.Pizza", "Pizza")
                         .WithMany("Itens")
                         .HasForeignKey("PizzaId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Pedido");
 

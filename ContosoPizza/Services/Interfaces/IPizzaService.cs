@@ -13,6 +13,6 @@ namespace ContosoPizza.Services.Interfaces
 
         Task<ServiceResponse<PizzaResponseDto>> UpdatePizza(PizzaUpdateDto dto);
 
-        Task<ServiceResponse<List<Pizza>>> DeletePizza(int id);
+        Task<ServiceResponse<string>> DeletePizza(int id);
     }
 }

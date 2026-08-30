@@ -40,5 +40,16 @@ namespace ContosoPizza.Controllers
 
             return Ok(response);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResponse<string>>> DeletePizza(int id)
+        {
+            var response = await _PizzaInterface.DeletePizza(id);
+
+            if(!response.Sucesso)
+                return NotFound(response.Mensagem);
+
+            return Ok(response);
+        }
     }
 }

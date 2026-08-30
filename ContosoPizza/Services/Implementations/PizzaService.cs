@@ -53,9 +53,27 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<List<Pizza>>> DeletePizza(int id)
+        public async Task<ServiceResponse<string>> DeletePizza(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<string> serviceResponse = new();
+
+            try
+            {
+                var pizza = await  _context.Pizza
+                    .FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Nenhuma pizza encontrada");   
+
+                _context.Pizza.Remove(pizza);
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Dados = "Pizza removida com sucesso";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Sucesso = false;
+                serviceResponse.Mensagem = ex.Message;
+            }
+
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<PizzaResponseDto>>> GetPizza()

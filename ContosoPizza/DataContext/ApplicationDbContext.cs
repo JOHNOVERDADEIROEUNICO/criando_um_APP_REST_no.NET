@@ -22,7 +22,7 @@ namespace ContosoPizza.DataContext
     
 
     //O model Build é menos moderno que o DbSet, porém ele permite que editemos e construamos os models exatamente igual a tabela de forma manual, e ainda faz com que sejamos capazes de editar caso a tabela e suas colunas diferenciem em nome da classe model e seus parametros assim indicando perfeitamente onde cada coisa se encaixa. Além disso, ele é melhor para mapear um banco legado (Banco já existete que somente vamos consumir os dados, ou seja que outro sistema cuida). o exemplo completo do Model Build com essas edições está em PDF na parte 3 da pasta explicações, aqui como nossa classe e seus parametros são indenticos em tipo e nome, logo não se faz necessário digitar tanto código assim. No fim se for criar pela primeira vez, prefira o DbSet, como eu fui fazendo acabei preferindo por deixar nele.
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    /*protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Clientes>(); //.ToTable("Clientes");  (Se caso a tabela possuir um nome diferente da classe model.)
 
@@ -35,6 +35,38 @@ namespace ContosoPizza.DataContext
             modelBuilder.Entity<Pizza>();
 
             modelBuilder.Entity<Promocao>();
+
+            base.OnModelCreating(modelBuilder);
+        }*/
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Cliente -> Pedido (1:N)
+            modelBuilder.Entity<Pedido>()
+                .HasOne(p => p.Cliente)
+                .WithMany(c => c.Pedidos)
+                .HasForeignKey(p => p.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Pedido -> ItemPedido (1:N)
+            modelBuilder.Entity<ItemPedido>()
+                .HasOne(i => i.Pedido)
+                .WithMany(p => p.Itens)
+                .HasForeignKey(i => i.PedidoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Pedido -> Pagamento (1:1)
+            modelBuilder.Entity<Pagamento>()
+                .HasOne(p => p.Pedido)
+                .WithOne(ped => ped.Pagamento)
+                .HasForeignKey<Pagamento>(p => p.PedidoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ItemPedido>()
+                .HasOne(i => i.Pizza)
+                .WithMany(p => p.Itens)
+                .HasForeignKey(i => i.PizzaId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             base.OnModelCreating(modelBuilder);
         }

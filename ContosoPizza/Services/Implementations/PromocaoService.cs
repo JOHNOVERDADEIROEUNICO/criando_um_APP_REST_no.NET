@@ -58,9 +58,27 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<List<Promocao>>> DeletePromocao(int id)
+        public async Task<ServiceResponse<string>> DeletePromocao(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<string> serviceResponse = new();
+
+            try
+            {
+                var promocao = await _context.Promocao
+                    .FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Nenhuma promoção encontrada.");
+
+                _context.Promocao.Remove(promocao);
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Dados = "Promoção removida com sucesso";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Sucesso = false;
+                serviceResponse.Mensagem = ex.Message;
+            }
+
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<PromocaoResponseDto>>> GetPromocao()
