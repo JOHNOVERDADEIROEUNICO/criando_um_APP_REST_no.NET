@@ -9,7 +9,7 @@ namespace ContosoPizza.Services.Interfaces
 
         Task<ServiceResponse<List<PedidoResponseDto>>> CreatePedido(PedidoCreateDto newPedido);
 
-        Task<ServiceResponse<Pedido>> GetPedidoById(int id);
+        Task<ServiceResponse<PedidoResponseDto>> GetPedidoById(int id);
 
         Task<ServiceResponse<List<Pedido>>> UpdatePedido(Pedido updatePedido);
 

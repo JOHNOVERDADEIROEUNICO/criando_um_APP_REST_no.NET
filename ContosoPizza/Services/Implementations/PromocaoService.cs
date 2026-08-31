@@ -112,9 +112,32 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<Promocao>> GetPromocaoById(int id)
+        public async Task<ServiceResponse<PromocaoResponseDto>> GetPromocaoById(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<PromocaoResponseDto> serviceResponse = new();
+
+            try
+            {
+                var promocao = await _context.Promocao.FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Dados não encontrados.");
+
+                var promocaoResponse = new PromocaoResponseDto
+                {
+                    Id = promocao.Id,
+                    Descricao = promocao.Descricao,
+                    Desconto = promocao.Desconto,
+                    Ativa = promocao.Ativa,
+                    ApenasParaCadastrados = promocao.ApenasParaCadastrados
+                };
+
+                serviceResponse.Dados = promocaoResponse;                
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.Mensagem = ex.Message;
+                serviceResponse.Sucesso = false;
+            }
+
+            return serviceResponse;
         }
 
         public Task<ServiceResponse<List<Promocao>>> InativaPromocao(int id)

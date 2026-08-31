@@ -30,5 +30,16 @@ namespace ContosoPizza.Controllers
             var pedido = await _PedidoInterface.CreatePedido(dto);
             return Ok(pedido);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceResponse<PedidoResponseDto>>> GetPedidoById(int id)
+        {
+            var response = await _PedidoInterface.GetPedidoById(id);
+
+            if(!response.Sucesso)
+                return NotFound(response.Mensagem);
+
+            return Ok(response);
+        }
     }
 }

@@ -76,9 +76,30 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Clientes>> GetClienteById(int id)
+        public async Task<ServiceResponse<ClienteResponseDto>> GetClienteById(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<ClienteResponseDto> serviceResponse = new();
+
+            try
+            {
+                var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Id == id) ?? throw new Exception("Dados não encontrados.");
+
+                var clienteResponse = new ClienteResponseDto
+                {
+                    Id = cliente.Id,
+                    Nome = cliente.Nome,
+                    Email = cliente.Email
+                };
+
+                serviceResponse.Dados = clienteResponse;                
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.Mensagem = ex.Message;
+                serviceResponse.Sucesso = false;
+            }
+
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<ClienteResponseDto>>> GetClientes()

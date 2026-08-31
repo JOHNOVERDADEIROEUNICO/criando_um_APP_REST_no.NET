@@ -160,7 +160,6 @@ namespace ContosoPizza.Services.Implementations
                     
                     Itens = i.Itens.Select(p => new ItemPedidoResponseDto
                     {
-                        Id = p.Id,
                         PizzaId = p.PizzaId,
                         NomePizza = p.Pizza!.Nome,
                         Quantidade = p.Quantidade
@@ -189,9 +188,51 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<Pedido>> GetPedidoById(int id)
+        public async Task<ServiceResponse<PedidoResponseDto>> GetPedidoById(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<PedidoResponseDto> serviceResponse = new();
+
+            try
+            {
+                var pedido = await _context.Pedido
+                    .Include(p => p.Itens)
+                        .ThenInclude(p => p.Pizza)
+                    .Include(p => p.Pagamento)
+                    .FirstOrDefaultAsync(c => c.Id == id) ?? throw new Exception("Dados não encontrados.");
+
+                var itens = pedido.Itens.ToList();
+
+                var pedidoResponse = new PedidoResponseDto
+                {
+                    Id = pedido.Id,
+                    UsuarioId = pedido.UsuarioId,
+                    Data = pedido.Data,
+                    Total = pedido.Total,
+
+                    Itens = itens.Select(i => new ItemPedidoResponseDto
+                    {
+                        PizzaId = i.PizzaId,
+                        NomePizza = i.Pizza!.Nome,
+                        Quantidade = i.Quantidade
+
+                    }).ToList(),
+
+                    Pagamento = new PagamentoResponseDto
+                    {
+                        Tipo = pedido.Pagamento!.Tipo,
+                        Status = pedido.Pagamento.Status
+                    }
+                };
+
+                serviceResponse.Dados = pedidoResponse;                
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.Mensagem = ex.Message;
+                serviceResponse.Sucesso = false;
+            }
+
+            return serviceResponse;
         }
 
         public Task<ServiceResponse<List<Pedido>>> UpdatePedido(Pedido updatePedido)

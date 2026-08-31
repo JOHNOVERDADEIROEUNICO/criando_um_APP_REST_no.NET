@@ -51,5 +51,16 @@ namespace ContosoPizza.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceResponse<PromocaoResponseDto>>> GetPromocaoById(int id)
+        {
+            var response = await _PromocaoInterface.GetPromocaoById(id);
+
+            if(!response.Sucesso)
+                return NotFound(response.Mensagem);
+
+            return Ok(response);
+        }
     }
 }

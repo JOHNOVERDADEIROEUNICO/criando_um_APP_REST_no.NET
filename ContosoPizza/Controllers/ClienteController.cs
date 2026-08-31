@@ -21,7 +21,12 @@ namespace ContosoPizza.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<ClienteResponseDto>>>> GetClientes()
         {
-            return Ok(await _ClienteInterface.GetClientes());
+            var response = await _ClienteInterface.GetClientes();
+
+            if(!response.Sucesso)
+                return NotFound(response.Mensagem);
+
+            return Ok(response);
         }
 
         [HttpPost]
@@ -50,6 +55,17 @@ namespace ContosoPizza.Controllers
         public async Task<ActionResult<ServiceResponse<string>>> DeleteClientes(int id)
         {
             var response = await _ClienteInterface.DeleteClientes(id);
+
+            if(!response.Sucesso)
+                return NotFound(response.Mensagem);
+
+            return Ok(response);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceResponse<ClienteResponseDto>>> GetClienteById(int id)
+        {
+            var response = await _ClienteInterface.GetClienteById(id);
 
             if(!response.Sucesso)
                 return NotFound(response.Mensagem);
