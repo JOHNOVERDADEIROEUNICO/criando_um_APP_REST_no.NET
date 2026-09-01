@@ -134,9 +134,27 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<List<Pedido>>> DeletePedido(int id)
+        public async Task<ServiceResponse<string>> DeletePedido(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<string> serviceResponse = new();
+
+            try
+            {
+                var pedido = await _context.Pedido
+                    .FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Nenhum pedido encontrado com este id.");
+
+                _context.Pedido.Remove(pedido);
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Dados = "Pedido cancelado.";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Sucesso = false;
+                serviceResponse.Mensagem = ex.Message;
+            }
+
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<PedidoResponseDto>>> GetPedido()
