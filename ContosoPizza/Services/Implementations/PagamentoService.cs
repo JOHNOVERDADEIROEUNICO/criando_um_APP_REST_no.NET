@@ -57,13 +57,13 @@ namespace ContosoPizza.Services.Implementations
             if(pagamento == null)
             {
                 serviceResponse.Sucesso = false;
-                serviceResponse.Mensagem = "Pagamento já processado";
+                serviceResponse.Mensagem = "Pagamento não encontrado.";
             }
                 
             else if(pagamento!.Status != Enum.StatusEnum.Pendente)
             {
                 serviceResponse.Sucesso = false;
-                serviceResponse.Mensagem = "Pagamento já processado";
+                serviceResponse.Mensagem = "Pagamento já processado ou cancelado.";
             }
 
             else
