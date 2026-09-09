@@ -140,11 +140,6 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<List<Promocao>>> InativaPromocao(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<ServiceResponse<PromocaoResponseDto>> UpdatePromocao(PromocaoUpdateDto dto)
         {
             ServiceResponse<PromocaoResponseDto> serviceResponse = new();

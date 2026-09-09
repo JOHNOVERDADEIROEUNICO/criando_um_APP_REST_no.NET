@@ -16,16 +16,6 @@ namespace ContosoPizza.Services.Implementations
             _context = context;
         }
 
-        public Task<ServiceResponse<List<Pagamento>>> CreatePagamento(Pagamento newPagamento)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ServiceResponse<List<Pagamento>>> DeletePagamento(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<ServiceResponse<List<PagamentoResponseDto>>> GetPagamento()
         {
             ServiceResponse<List<PagamentoResponseDto>> serviceResponse = new ServiceResponse<List<PagamentoResponseDto>>();

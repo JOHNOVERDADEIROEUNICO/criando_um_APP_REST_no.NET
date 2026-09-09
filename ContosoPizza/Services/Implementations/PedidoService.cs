@@ -253,9 +253,5 @@ namespace ContosoPizza.Services.Implementations
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<List<Pedido>>> UpdatePedido(Pedido updatePedido)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
