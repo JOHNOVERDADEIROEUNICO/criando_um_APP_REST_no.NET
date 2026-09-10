@@ -59,10 +59,44 @@ namespace ContosoPizza.Services.Implementations
 
             try
             {
-                var pizza = await  _context.Pizza
-                    .FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Nenhuma pizza encontrada");   
+                var pizza = await _context.Pizza
+                    .FirstOrDefaultAsync(p => p.Id == id)
+                    ?? throw new Exception("Nenhuma pizza encontrada");
 
+                var itensPedidos = await _context.ItemPedido
+                    .Where(p => p.PizzaId == id)
+                    .ToListAsync();
+
+                // Pega todos os PedidoIds únicos
+                var pedidosIds = itensPedidos
+                    .Select(i => i.PedidoId)
+                    .Distinct()
+                    .ToList();
+
+                // Busca todos os pedidos de uma vez
+                var pedidos = await _context.Pedido
+                    .Where(p => pedidosIds.Contains(p.Id))
+                    .Include(p => p.Itens)
+                    .ToListAsync();
+
+                // Remove apenas pedidos que ficariam vazios
+                foreach (var pedido in pedidos)
+                {
+                    var totalItens = pedido.Itens.Count;
+                    var itensDaPizza = pedido.Itens.Count(i => i.PizzaId == id);
+
+                    if (totalItens == itensDaPizza)
+                    {
+                        _context.Pedido.Remove(pedido);
+                    }
+                }
+
+                // Remove os itens da pizza
+                _context.ItemPedido.RemoveRange(itensPedidos);
+
+                // Remove a pizza
                 _context.Pizza.Remove(pizza);
+
                 await _context.SaveChangesAsync();
 
                 serviceResponse.Dados = "Pizza removida com sucesso";
