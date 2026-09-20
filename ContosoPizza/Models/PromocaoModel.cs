@@ -1,0 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace ContosoPizza.Models
+{
+    
+    public class Promocao
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public string Descricao { get; set; } = string.Empty;
+
+        [Range(0.1, 1, ErrorMessage = "Erro, numero fora do range aceitável")]
+        public decimal Desconto { get; set; }
+
+        public bool? Ativa { get; set; }
+
+        public bool? ApenasParaCadastrados { get; set; }
+
+        public int PizzaId {get; set;}
+
+        public Pizza? Pizza {get; set;}
+
+    }
+}
